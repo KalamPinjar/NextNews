@@ -4,18 +4,27 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+
 import { ModeToggle } from "./theme-provider/theme-toggle";
-import { Loader2, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useNewsStore } from "@/store/newsStore";
+import Link from "next/link";
 
 const listOfCategories: { name: string }[] = [
   { name: "technology" },
@@ -29,29 +38,14 @@ const listOfCategories: { name: string }[] = [
   { name: "world" },
 ];
 
-const languages: { name: string }[] = [
-  { name: "ar" },
-  { name: "zh" },
-  { name: "nl" },
-  { name: "en" },
-  { name: "fr" },
-  { name: "de" },
-  { name: "el" },
-  { name: "he" },
-  { name: "hi" },
-  { name: "it" },
-  { name: "ja" },
-  { name: "ml" },
-  { name: "mr" },
-  { name: "no" },
-  { name: "pt" },
-  { name: "ro" },
-  { name: "ru" },
-  { name: "es" },
-  { name: "sv" },
-  { name: "ta" },
-  { name: "te" },
-  { name: "uk" },
+const languages: { code: string; name: string }[] = [
+  { name: "Arabic", code: "ar" },
+  { name: "English", code: "en" },
+  { name: "French", code: "fr" },
+  { name: "Hindi", code: "hi" },
+  { name: "Japanese", code: "ja" },
+  { name: "Russian", code: "ru" },
+  { name: "Spanish", code: "es" },
 ];
 
 const countries: { name: string; code: string }[] = [
@@ -88,6 +82,7 @@ const countries: { name: string; code: string }[] = [
 ];
 
 export function Navbar() {
+  const [searchQuery, setSearchQuery] = React.useState("");
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -95,7 +90,7 @@ export function Navbar() {
   const currentCountry = searchParams.get("country") || "us";
   const currentLang = searchParams.get("lang") || "en";
 
-  const { newsData, loading, error, fetchNews } = useNewsStore((state) => ({
+  const { fetchNews } = useNewsStore((state) => ({
     newsData: state.newsData,
     loading: state.loading,
     error: state.error,
@@ -123,6 +118,12 @@ export function Navbar() {
     fetchNews({ country: currentCountry, category: currentCategory, lang });
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery) return;
+    router.push(`/search?query=${searchQuery}&page=1`);
+  };
+
   React.useEffect(() => {
     fetchNews({
       country: currentCountry,
@@ -132,65 +133,77 @@ export function Navbar() {
   }, [currentCategory, currentCountry, currentLang, fetchNews]);
 
   return (
-    <NavigationMenu className="p-2">
+    <NavigationMenu className="top-0 sticky border-white bg-gray-950 p-2 border-b-2 border-double">
       <NavigationMenuList className="gap-3">
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="gap-3 grid md:grid-cols-2 lg:grid-cols-3 p-4 w-[400px] md:w-[500px] lg:w-[600px]">
-              {listOfCategories.map((category) => (
-                <ListItem
-                  key={category.name}
-                  title={category.name}
-                  onClick={() => handleCategoryChange(category.name)}
-                />
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
+
+        <Menubar className="md:flex gap-3 hidden">
+          <MenubarMenu>
+            <MenubarTrigger>Categories</MenubarTrigger>
+            <MenubarContent>
+              <ul className="gap-3 grid grid-cols-1 p-4">
+                {listOfCategories.map((category) => (
+                  <MenubarItem
+                    className="capitalize"
+                    key={category.name}
+                    onClick={() => handleCategoryChange(category.name)}
+                  >
+                    {category.name}
+                    <MenubarSeparator />
+                  </MenubarItem>
+                ))}
+              </ul>
+            </MenubarContent>
+          </MenubarMenu>
+          <MenubarMenu>
+            <MenubarTrigger>Countries</MenubarTrigger>
+            <MenubarContent>
+              <ul className="gap-3 grid md:grid-cols-2 lg:grid-cols-3 p-4 w-[400px] md:w-[500px] lg:w-[600px]">
+                {countries.map((country) => (
+                  <MenubarItem
+                    key={country.code}
+                    onClick={() => handleCountryChange(country.code)}
+                  >
+                    {country.name}
+                  </MenubarItem>
+                ))}
+              </ul>
+            </MenubarContent>
+          </MenubarMenu>
+          <MenubarMenu>
+            <MenubarTrigger>Languages</MenubarTrigger>
+            <MenubarContent>
+              <ul className="gap-3 grid grid-cols-1 p-4 capitalize">
+                {languages.map((lang) => (
+                  <MenubarItem
+                    key={lang.code}
+                    onClick={() => handleLanguageChange(lang.code)}
+                  >
+                    {lang.name}
+                  </MenubarItem>
+                ))}
+              </ul>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Countries</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="gap-3 grid md:grid-cols-2 lg:grid-cols-3 p-4 w-[400px] md:w-[500px] lg:w-[600px]">
-              {countries.map((country) => (
-                <ListItem
-                  key={country.code}
-                  title={country.name}
-                  onClick={() => handleCountryChange(country.code)}
-                />
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Languages</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="gap-3 grid md:grid-cols-2 lg:grid-cols-3 p-4 w-[400px] md:w-[500px] lg:w-[600px]">
-              {languages.map((lang) => (
-                <ListItem
-                  key={lang.name}
-                  title={lang.name.toUpperCase()}
-                  onClick={() => handleLanguageChange(lang.name)}
-                />
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <div className="font-bold text-center">𝔸ℂ𝕆ℕ𝔼𝕎𝕊</div>
+          <Link href="/">
+            <div className="font-bold text-center">𝔸ℂ𝕆ℕ𝔼𝕎𝕊</div>
+          </Link>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            <Input
-              className="bg-inherit border-none focus:ring-0 focus-visible:ring-0"
-              placeholder="Search news..."
-            >
-              <Search className="opacity-50 mr-2 w-4 h-4" />
-            </Input>
+            <form onSubmit={handleSearch}>
+              <Input
+                className="bg-inherit border-none focus:ring-0 focus-visible:ring-0"
+                placeholder="Search news..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              >
+                <Search className="opacity-50 mr-2 w-4 h-4" />
+              </Input>
+            </form>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
@@ -198,9 +211,6 @@ export function Navbar() {
           <ModeToggle />
         </NavigationMenuItem>
       </NavigationMenuList>
-      {loading && <Loader2 className="w-6 h-6 animate-spin" />}
-      {error && <div className="text-red-500">{error}</div>}
-      {newsData && <div>{/* Render the fetched news data here */}</div>}
     </NavigationMenu>
   );
 }

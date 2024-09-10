@@ -2,10 +2,24 @@
 import { create } from "zustand";
 
 interface NewsState {
-  newsData: string | null;
+  newsData?: {
+    articles: Array<{
+      title: string;
+      description: string;
+      content: string;
+      url: string;
+      image: string;
+      publishedAt: string;
+      source: {
+        name: string;
+        url: string;
+      }
+      // Add other properties that might be present in each article
+    }>;
+  };
   loading: boolean;
   error: string | null;
-  setNewsData: (data: string) => void;
+  setNewsData: (data: never) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   fetchNews: (params: {
@@ -16,7 +30,7 @@ interface NewsState {
 }
 
 export const useNewsStore = create<NewsState>((set) => ({
-  newsData: null,
+  newsData: { articles: [] },
   loading: false,
   error: null,
   setNewsData: (data) => set({ newsData: data }),
