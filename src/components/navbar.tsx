@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/menubar";
 
 import { ModeToggle } from "./theme-provider/theme-toggle";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useNewsStore } from "@/store/newsStore";
@@ -133,85 +133,86 @@ export function Navbar() {
   }, [currentCategory, currentCountry, currentLang, fetchNews]);
 
   return (
-    <NavigationMenu className="top-0 sticky border-white bg-gray-950 p-2 border-b-2 border-double">
-      <NavigationMenuList className="gap-3">
+    <React.Suspense fallback={<Loader2 className="w-8 h-8 animate-spin" />}>
+      <NavigationMenu className="top-0 sticky border-white bg-gray-950 p-2 border-b-2 border-double">
+        <NavigationMenuList className="gap-3">
+          <Menubar className="md:flex gap-3 hidden">
+            <MenubarMenu>
+              <MenubarTrigger>Categories</MenubarTrigger>
+              <MenubarContent>
+                <ul className="gap-3 grid grid-cols-1 p-4">
+                  {listOfCategories.map((category) => (
+                    <MenubarItem
+                      className="capitalize"
+                      key={category.name}
+                      onClick={() => handleCategoryChange(category.name)}
+                    >
+                      {category.name}
+                      <MenubarSeparator />
+                    </MenubarItem>
+                  ))}
+                </ul>
+              </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+              <MenubarTrigger>Countries</MenubarTrigger>
+              <MenubarContent>
+                <ul className="gap-3 grid md:grid-cols-2 lg:grid-cols-3 p-4 w-[400px] md:w-[500px] lg:w-[600px]">
+                  {countries.map((country) => (
+                    <MenubarItem
+                      key={country.code}
+                      onClick={() => handleCountryChange(country.code)}
+                    >
+                      {country.name}
+                    </MenubarItem>
+                  ))}
+                </ul>
+              </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+              <MenubarTrigger>Languages</MenubarTrigger>
+              <MenubarContent>
+                <ul className="gap-3 grid grid-cols-1 p-4 capitalize">
+                  {languages.map((lang) => (
+                    <MenubarItem
+                      key={lang.code}
+                      onClick={() => handleLanguageChange(lang.code)}
+                    >
+                      {lang.name}
+                    </MenubarItem>
+                  ))}
+                </ul>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
 
-        <Menubar className="md:flex gap-3 hidden">
-          <MenubarMenu>
-            <MenubarTrigger>Categories</MenubarTrigger>
-            <MenubarContent>
-              <ul className="gap-3 grid grid-cols-1 p-4">
-                {listOfCategories.map((category) => (
-                  <MenubarItem
-                    className="capitalize"
-                    key={category.name}
-                    onClick={() => handleCategoryChange(category.name)}
-                  >
-                    {category.name}
-                    <MenubarSeparator />
-                  </MenubarItem>
-                ))}
-              </ul>
-            </MenubarContent>
-          </MenubarMenu>
-          <MenubarMenu>
-            <MenubarTrigger>Countries</MenubarTrigger>
-            <MenubarContent>
-              <ul className="gap-3 grid md:grid-cols-2 lg:grid-cols-3 p-4 w-[400px] md:w-[500px] lg:w-[600px]">
-                {countries.map((country) => (
-                  <MenubarItem
-                    key={country.code}
-                    onClick={() => handleCountryChange(country.code)}
-                  >
-                    {country.name}
-                  </MenubarItem>
-                ))}
-              </ul>
-            </MenubarContent>
-          </MenubarMenu>
-          <MenubarMenu>
-            <MenubarTrigger>Languages</MenubarTrigger>
-            <MenubarContent>
-              <ul className="gap-3 grid grid-cols-1 p-4 capitalize">
-                {languages.map((lang) => (
-                  <MenubarItem
-                    key={lang.code}
-                    onClick={() => handleLanguageChange(lang.code)}
-                  >
-                    {lang.name}
-                  </MenubarItem>
-                ))}
-              </ul>
-            </MenubarContent>
-          </MenubarMenu>
-        </Menubar>
+          <NavigationMenuItem>
+            <Link href="/">
+              <div className="font-bold text-center">𝔸ℂ𝕆ℕ𝔼𝕎𝕊</div>
+            </Link>
+          </NavigationMenuItem>
 
-        <NavigationMenuItem>
-          <Link href="/">
-            <div className="font-bold text-center">𝔸ℂ𝕆ℕ𝔼𝕎𝕊</div>
-          </Link>
-        </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <form onSubmit={handleSearch}>
+                <Input
+                  className="bg-inherit border-none focus:ring-0 focus-visible:ring-0"
+                  placeholder="Search news..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                >
+                  <Search className="opacity-50 mr-2 w-4 h-4" />
+                </Input>
+              </form>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
 
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            <form onSubmit={handleSearch}>
-              <Input
-                className="bg-inherit border-none focus:ring-0 focus-visible:ring-0"
-                placeholder="Search news..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              >
-                <Search className="opacity-50 mr-2 w-4 h-4" />
-              </Input>
-            </form>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <ModeToggle />
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+          <NavigationMenuItem>
+            <ModeToggle />
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </React.Suspense>
   );
 }
 

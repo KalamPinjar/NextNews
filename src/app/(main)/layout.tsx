@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "../../components/theme-provider/theme-providers";
 import { Navbar } from "../../components/navbar";
+import React from "react";
+import { Loader2 } from "lucide-react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,8 +38,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar/>
-          {children}
+          <Navbar />
+          <React.Suspense
+            fallback={<Loader2 className="w-8 h-8 animate-spin" />}
+          >
+            {children}
+          </React.Suspense>
         </ThemeProvider>
       </body>
     </html>

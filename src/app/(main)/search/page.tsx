@@ -1,7 +1,7 @@
 "use client";
 
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { TypographyBlockquote } from "@/components/typography/blockquote";
 import Link from "next/link";
@@ -40,11 +40,7 @@ const SearchResults = () => {
         setResults(response.data.articles);
         setLoading(false);
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          setError(error.response?.data || error.message);
-        } else {
-          setError("An unknown error occurred");
-        }
+        setError("An error occurred");
         setLoading(false);
       }
     };
@@ -60,46 +56,37 @@ const SearchResults = () => {
     router.push(`/search?query=${query}&page=${Number(page) - 1}`);
   };
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  if (error) return <div>Error: {error}</div>;
-
   return (
-    <div className="bg-white dark:bg-gray-950 mx-auto p-6 container">
-      <h1 className="mb-10 font-bold text-black text-xl dark:text-white">
-        Search Results for &quot;{query}&quot;
-      </h1>
-
-      <ul>
-        {results?.map((article: Article, idx: number) => (
-          <li key={idx} className="my-2 p-4 border">
-            <Link
-              className="font-bold text-black text-xl dark:text-white"
-              href={`/${encodeURIComponent(article.title)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() =>
-                localStorage.setItem("selectedArticle", JSON.stringify(article))
-              }
-            >
-              {article.title}
-            </Link>
-            <TypographyBlockquote>{article.description}</TypographyBlockquote>
-          </li>
-        ))}
-      </ul>
-
-      <div className="flex justify-between my-4">
-        <button onClick={handlePrevPage} disabled={page === 1}>
-          Previous
-        </button>
-        <button onClick={handleNextPage}>Next</button>
+    <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin" />}>
+      <div className="bg-white dark:bg-gray-950 mx-auto p-6 container">
+        <h1 className="mb-10 font-bold text-black text-xl dark:text-white">
+          Search Results for &quot;{query}&quot;
+        </h1>
+        {loading && <Loader2 className="w-8 h-8 animate-spin" />}
+        {error && <div>Error: {error}</div>}
+        <ul>
+          {results?.map((article: Article, idx: number) => (
+            <li key={idx} className="my-2 p-4 border">
+              <Link
+                className="font-bold text-black text-xl dark:text-white"
+                href={`/${encodeURIComponent(article.title)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {article.title}
+              </Link>
+              <TypographyBlockquote>{article.description}</TypographyBlockquote>
+            </li>
+          ))}
+        </ul>
+        <div className="flex justify-between my-4">
+          <button onClick={handlePrevPage} disabled={page === 1}>
+            Previous
+          </button>
+          <button onClick={handleNextPage}>Next</button>
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 };
 
