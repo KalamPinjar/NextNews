@@ -5,22 +5,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import Image from "@/components/newsComponent/Image";
-
-interface Article {
-  title: string;
-  publishedAt: string;
-  source: {
-    name: string;
-  };
-  image: string;
-  content: string;
-  description: string;
-  url: string;
-}
+import { Article } from "@/types/article";
 
 // Single article page component
 export default function ArticlePage({ params }: { params: { title: string } }) {
-
   const [article, setArticle] = useState<Article | null>(null);
 
   useEffect(() => {
@@ -46,7 +34,9 @@ export default function ArticlePage({ params }: { params: { title: string } }) {
     <div className="bg-white dark:bg-gray-950 mx-auto px-64 py-6 container">
       {/* Article Header */}
       <div className="mb-6">
-        <h1 className="mb-2 font-bold text-3xl text-black dark:text-white">{article.title}</h1>
+        <h1 className="mb-2 font-bold text-3xl text-black dark:text-white">
+          {article.title}
+        </h1>
         <div className="flex justify-between items-center">
           <p className="text-gray-500">
             Published on:{" "}
@@ -58,12 +48,18 @@ export default function ArticlePage({ params }: { params: { title: string } }) {
 
       {/* Article Image */}
       <div className="relative mb-6 w-full h-[400px]">
-        <Image style={{height:"400px"}} src={article.image} alt={article.title} />
+        <Image
+          style={{ height: "400px" }}
+          src={article.image}
+          alt={article.title}
+        />
       </div>
 
       {/* Article Content */}
       <div className="mb-6">
-        <p className="mb-4 text-black/80 text-lg dark:text-white">{article.content}</p>
+        <p className="mb-4 text-black/80 text-lg dark:text-white">
+          {article.content}
+        </p>
         <blockquote className="text-gray-600 italic">
           {article.description}
         </blockquote>

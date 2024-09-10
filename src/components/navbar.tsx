@@ -25,61 +25,12 @@ import { Input } from "@/components/ui/input";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useNewsStore } from "@/store/newsStore";
 import Link from "next/link";
+import { listOfCategories } from "@/lib/listofCategories";
+import { languages } from "@/lib/languages";
+import { countries } from '../lib/countries';
 
-const listOfCategories: { name: string }[] = [
-  { name: "technology" },
-  { name: "business" },
-  { name: "entertainment" },
-  { name: "sports" },
-  { name: "health" },
-  { name: "science" },
-  { name: "general" },
-  { name: "nation" },
-  { name: "world" },
-];
 
-const languages: { code: string; name: string }[] = [
-  { name: "Arabic", code: "ar" },
-  { name: "English", code: "en" },
-  { name: "French", code: "fr" },
-  { name: "Hindi", code: "hi" },
-  { name: "Japanese", code: "ja" },
-  { name: "Russian", code: "ru" },
-  { name: "Spanish", code: "es" },
-];
 
-const countries: { name: string; code: string }[] = [
-  { name: "Australia", code: "au" },
-  { name: "Brazil", code: "br" },
-  { name: "Canada", code: "ca" },
-  { name: "China", code: "cn" },
-  { name: "Egypt", code: "eg" },
-  { name: "France", code: "fr" },
-  { name: "Germany", code: "de" },
-  { name: "Greece", code: "gr" },
-  { name: "Hong Kong", code: "hk" },
-  { name: "India", code: "in" },
-  { name: "Ireland", code: "ie" },
-  { name: "Israel", code: "il" },
-  { name: "Italy", code: "it" },
-  { name: "Japan", code: "jp" },
-  { name: "Netherlands", code: "nl" },
-  { name: "Norway", code: "no" },
-  { name: "Pakistan", code: "pk" },
-  { name: "Peru", code: "pe" },
-  { name: "Philippines", code: "ph" },
-  { name: "Portugal", code: "pt" },
-  { name: "Romania", code: "ro" },
-  { name: "Russian Federation", code: "ru" },
-  { name: "Singapore", code: "sg" },
-  { name: "Spain", code: "es" },
-  { name: "Sweden", code: "se" },
-  { name: "Switzerland", code: "ch" },
-  { name: "Taiwan", code: "tw" },
-  { name: "Ukraine", code: "ua" },
-  { name: "United Kingdom", code: "gb" },
-  { name: "United States", code: "us" },
-];
 
 export function Navbar() {
   const [searchQuery, setSearchQuery] = React.useState("");

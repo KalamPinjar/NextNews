@@ -6,18 +6,8 @@ import axios from "axios";
 import { TypographyBlockquote } from "@/components/typography/blockquote";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { Article } from "@/types/article";
 
-interface Article {
-  title: string;
-  publishedAt: string;
-  source: {
-    name: string;
-  };
-  image: string;
-  content: string;
-  description: string;
-  url: string;
-}
 
 const SearchResults = () => {
   const searchParams = useSearchParams();

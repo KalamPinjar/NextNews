@@ -15,17 +15,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import Link from "next/link";
 import Image from "./Image";
+import { listOfCategories } from "@/lib/listofCategories";
 
-const categories = [
-  { name: "business" },
-  { name: "entertainment" },
-  { name: "health" },
-  { name: "science" },
-  { name: "sports" },
-  { name: "technology" },
-  { name: "nation" },
-  { name: "world" },
-];
+
 
 const NewsComponent = () => {
   const { loading, error, newsData, fetchNews } = useNewsStore(
@@ -126,7 +118,7 @@ const NewsComponent = () => {
         ) : (
           <>
             <ul className="space-y-3">
-              {categories.map((item, index) => (
+              {listOfCategories.map((item, index) => (
                 <li
                   key={index}
                   className="dark:hover:bg-slate-800 hover:bg-slate-50 shadow-md p-3 rounded-md text-black dark:text-white cursor-pointer"
